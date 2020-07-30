@@ -16,8 +16,11 @@ namespace CsvConvert
         {
             InitializeComponent();
         }
-        public string csvPath { get; private set; }
+        private string csvPath { get; set; }
+        private int featureNumber {get;set;}
         DataTable pivotTable;
+        Dictionary<int, string[]> csvContentDic;
+        private string outputFile {  get;  set; }
         private void getPathBtn_Click(object sender, EventArgs e)
         {
             OpenFileDialog pathReader = new OpenFileDialog();
@@ -34,8 +37,8 @@ namespace CsvConvert
                         csvPath = pathReader.FileName;
                         textBox1.Text = csvPath;
                         CsvReaderClass reader = new CsvReaderClass(csvPath);
-                        Dictionary<int, string[]> csvContent = reader.readCsv();
-                        int featureNumber = UtilFunction.getFeaturesNumber(csvContent);
+                        this.csvContentDic = reader.readCsv();
+                        featureNumber = UtilFunction.getFeaturesNumber(this.csvContentDic);
                         label1.Text = String.Format("共有 {0} 個特徵 要第幾個?", featureNumber);
                     }
                 }
@@ -46,16 +49,15 @@ namespace CsvConvert
             }
 
         }
-        private void csvProcessing(Dictionary<int, string[]> csvContent , int featureNumber)
+        private void csvProcessing(int featureNumber)
         {
             int row = 17;
             int featureCounter = 0;
-            while (featureNumber > 0 && row <= csvContent.Count)
+            while (featureNumber > 0 && row <= this.csvContentDic.Count)
             {
-                string[] temp = csvContent[row];
+                string[] temp = this.csvContentDic[row];
                 if (temp[0].Equals("Grid profile:"))
                 {
-                    featureNumber--;
                     featureCounter++;
                     if (featureNumber.Equals(featureCounter))
                     {
@@ -70,9 +72,9 @@ namespace CsvConvert
                         dt.Columns["Circumferential_position"].AllowDBNull = true;//不能空值
                         dt.Columns["Circumferential_position"].Unique = false;//建立唯一性
                         dt.Columns["Depth"].Unique = false;//建立唯一性
-                        UtilFunction.getcsvData(csvContent, row, dt);
+                        UtilFunction.getcsvData(this.csvContentDic, row, dt);
                         pivotTable = UtilFunction.ToPivot(dt, dt.Columns["Circumferential_position"], dt.Columns["Depth"]);
-
+                        break;
                     }
                 }
                 row++;
@@ -81,19 +83,37 @@ namespace CsvConvert
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-
+            if (!textBox1.Text.Equals(String.Empty))
+            {
+                textBox2.ReadOnly = false;
+                textBox2.Enabled = true;
+                button1.Enabled = true;
+                getOutputPathBtn.Enabled = true;
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            
+            int featureNum;
+            if(int.TryParse(textBox2.Text, out featureNum))
+            {
+                csvProcessing(featureNum);
+                UtilFunction.ToCSV(this.pivotTable, outputFile);
+                MessageBox.Show(String.Format("已經完成 ，檔案輸出到 : {0}", outputFile));
+                outputFile = String.Empty;
+                outputPath.Text = String.Empty;
+            }
+            else
+            {
+                MessageBox.Show("輸入指定 features 請輸入數字");
+            }
         }
 
         private void getOutputPathBtn_Click(object sender, EventArgs e)
         {
             int featureNum = 0;
 
-            if ((!textBox2.Text.Equals(String.Empty)) && int.TryParse(textBox2.Text, out featureNum))
+            if ((!textBox2.Text.Equals(String.Empty)) && (!textBox1.Text.Equals(String.Empty)) &&  int.TryParse(textBox2.Text, out featureNum))
             {
                 SaveFileDialog saveFile = new SaveFileDialog();
                 saveFile.Filter = "csv files (*.csv)|*.csv";
@@ -103,8 +123,25 @@ namespace CsvConvert
                 saveFile.ShowDialog();
                 if (saveFile.FileName != "")
                 {
-                    UtilFunction.ToCSV(this.pivotTable, String.Format("output_{0}.csv", textBox2.Text));
+                    this.outputFile = saveFile.FileName;
+                    this.outputPath.Text = outputFile;
+                    // 
                 }
+            }
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+            int textBox2Int;
+            if (int.TryParse(textBox2.Text, out textBox2Int))
+            {
+                textBox2Int = textBox2Int > featureNumber ? featureNumber : textBox2Int;
+                textBox2.Text = textBox2Int.ToString();
+            }
+            else
+            {
+                MessageBox.Show("輸入指定 features 請輸入數字");
+                textBox2.Text = "1";
             }
         }
     }
