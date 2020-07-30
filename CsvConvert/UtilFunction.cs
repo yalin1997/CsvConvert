@@ -45,6 +45,8 @@ namespace CsvConvert
         {
             // find primary key columns 
             //(i.e. everything but pivot column and pivot value)
+            dt.DefaultView.Sort = "Longitudinal_position";
+            dt = dt.DefaultView.ToTable();
             DataTable temp = dt.Copy();
             temp.Columns.Remove(pivotColumn.ColumnName);
             temp.Columns.Remove(pivotValue.ColumnName);
@@ -54,10 +56,11 @@ namespace CsvConvert
 
             // prep results table
             DataTable result = temp.DefaultView.ToTable(true, pkColumnNames).Copy();
+            result.Columns[0].ColumnName = " ";// 交會那格的內容
             result.PrimaryKey = result.Columns.Cast<DataColumn>().ToArray();
             dt.AsEnumerable()
                 .Select(r => r[pivotColumn.ColumnName].ToString())
-                .Distinct().ToList()
+                .Distinct().OrderBy(columnValue => Convert.ToDouble(columnValue)).ToList()
                 .ForEach(c => result.Columns.Add(c, pivotColumn.DataType));
 
             // load it
