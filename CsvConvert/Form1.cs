@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CsvConvert
@@ -27,7 +23,6 @@ namespace CsvConvert
             pathReader.Filter = "csv files (*.csv)|*.csv";
             pathReader.InitialDirectory = "'C://";
             pathReader.DefaultExt = "csv";
-            pathReader.FilterIndex = 2;
             if (pathReader.ShowDialog() == DialogResult.OK)
             {
                 try
@@ -37,9 +32,9 @@ namespace CsvConvert
                         csvPath = pathReader.FileName;
                         textBox1.Text = csvPath;
                         CsvReaderClass reader = new CsvReaderClass(csvPath);
-                        this.csvContentDic = reader.readCsv();
-                        featureNumber = UtilFunction.getFeaturesNumber(this.csvContentDic);
-                        label1.Text = String.Format("共有 {0} 個特徵 要第幾個?", featureNumber);
+                        csvContentDic = reader.readCsv();
+                        featureNumber = UtilFunction.getFeaturesNumber(csvContentDic);
+                        label1.Text = string.Format("共有 {0} 個特徵 要第幾個?", featureNumber);
                     }
                 }
                 catch (Exception ex)
@@ -62,10 +57,10 @@ namespace CsvConvert
                     if (featureNumber.Equals(featureCounter))
                     {
                         using DataTable dt = new DataTable("csvTable");
-                        dt.Columns.Add("Longitudinal_position", typeof(String));
-                        dt.Columns.Add("Circumferential_position", typeof(String));
-                        dt.Columns.Add("Depth", typeof(Double));
-                        dt.Columns["Longitudinal_position"].MaxLength = 10;//長度
+                        dt.Columns.Add("Longitudinal_position", typeof(double));
+                        dt.Columns.Add("Circumferential_position", typeof(string));
+                        dt.Columns.Add("Depth", typeof(double));
+
                         dt.Columns["Longitudinal_position"].AllowDBNull = true;//不能空值
                         dt.Columns["Longitudinal_position"].Unique = false;//建立唯一性
                         dt.Columns["Circumferential_position"].MaxLength = 10;//長度
@@ -73,7 +68,15 @@ namespace CsvConvert
                         dt.Columns["Circumferential_position"].Unique = false;//建立唯一性
                         dt.Columns["Depth"].Unique = false;//建立唯一性
                         UtilFunction.getcsvData(this.csvContentDic, row, dt);
-                        pivotTable = UtilFunction.ToPivot(dt, dt.Columns["Circumferential_position"], dt.Columns["Depth"]);
+                        //double longitudinalPositionMax = dt.AsEnumerable().Select(value => value.Field<double>("Longitudinal_position")).Max();
+                        dt.DefaultView.Sort = "Longitudinal_position";
+                        DataTable sortedTable = dt.DefaultView.ToTable();
+                        if (sortedTable.Rows.Count > 100.0)
+                        {
+                            sortedTable = UtilFunction.reduceTableRows( sortedTable, 3.0 );
+                        }
+                        pivotTable = UtilFunction.ToPivot(sortedTable, sortedTable.Columns["Circumferential_position"], sortedTable.Columns["Depth"]);
+                        sortedTable.Dispose();
                         break;
                     }
                 }

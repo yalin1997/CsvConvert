@@ -45,8 +45,7 @@ namespace CsvConvert
         {
             // find primary key columns 
             //(i.e. everything but pivot column and pivot value)
-            dt.DefaultView.Sort = "Longitudinal_position";
-            dt = dt.DefaultView.ToTable();
+            
             DataTable temp = dt.Copy();
             temp.Columns.Remove(pivotColumn.ColumnName);
             temp.Columns.Remove(pivotValue.ColumnName);
@@ -77,9 +76,67 @@ namespace CsvConvert
             }
             return result;
         }
+        public static DataTable reduceTableRows(DataTable targetTable , double targetDenominator)
+        {
+            double denominator = targetDenominator;
+            double rowCounter = 0.0;
+            double totalRows = targetTable.Rows.Count;
+            List<DataModel> modelList = new List<DataModel>();
+            DataTable resultTable = new DataTable("resultTable");
+            resultTable.Columns.Add("Longitudinal_position", typeof(double));
+            resultTable.Columns.Add("Circumferential_position", typeof(string));
+            resultTable.Columns.Add("Depth", typeof(double));
+            resultTable.Columns["Longitudinal_position"].AllowDBNull = true;//不能空值
+            resultTable.Columns["Longitudinal_position"].Unique = false;//建立唯一性
+            resultTable.Columns["Circumferential_position"].MaxLength = 10;//長度
+            resultTable.Columns["Circumferential_position"].AllowDBNull = true;//不能空值
+            resultTable.Columns["Circumferential_position"].Unique = false;//建立唯一性
+            resultTable.Columns["Depth"].Unique = false;//建立唯一性
+
+            foreach (DataRow row in targetTable.Rows)
+            {
+                rowCounter++;
+                modelList.Add(new DataModel() { 
+                    Longitudinal_position = double.Parse(row["Longitudinal_position"].ToString()),
+                    Circumferential_position = double.Parse(row["Circumferential_position"].ToString()),
+                    Depth = double.Parse(row["Depth"].ToString())
+                });
+                if((rowCounter % denominator).Equals(0))
+                {
+                    DataModel newRow = new DataModel();
+                    foreach (DataModel item in modelList)
+                    {
+                        newRow.Longitudinal_position += item.Longitudinal_position;
+                        newRow.Circumferential_position += item.Circumferential_position;
+                        newRow.Depth += item.Depth;
+                    }
+                    newRow.Longitudinal_position /= denominator;
+                    newRow.Circumferential_position /= denominator;
+                    newRow.Depth /= denominator;
+                    DataRow resultRow = resultTable.NewRow();
+                    resultRow["Longitudinal_position"] = newRow.Longitudinal_position;
+                    resultRow["Circumferential_position"] = newRow.Circumferential_position.ToString("0.000000");
+                    resultRow["Depth"] = newRow.Depth.ToString("0.000000");
+                    resultTable.Rows.Add(resultRow);
+                    modelList.Clear();
+                }
+                else
+                {
+                    if((totalRows - rowCounter) < denominator)
+                    {
+                        DataRow resultRow = resultTable.NewRow();
+                        resultRow["Longitudinal_position"] = row["Longitudinal_position"];
+                        resultRow["Circumferential_position"] = row["Circumferential_position"];
+                        resultRow["Depth"] = row["Depth"];
+                        resultTable.Rows.Add(resultRow);
+                    }
+                }
+            }
+            return resultTable;
+        }
         public static void ToCSV(DataTable dt, string strFilePath)
         {
-            StreamWriter sw = new StreamWriter(strFilePath, false);
+            using StreamWriter sw = new StreamWriter(strFilePath, false);
             //headers  
             for (int i = 0; i < dt.Columns.Count; i++)
             {

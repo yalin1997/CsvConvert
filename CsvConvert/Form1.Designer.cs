@@ -133,7 +133,7 @@
             // textBox2
             // 
             this.textBox2.Enabled = false;
-            this.textBox2.Location = new System.Drawing.Point(436, 273);
+            this.textBox2.Location = new System.Drawing.Point(455, 273);
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
             this.textBox2.Size = new System.Drawing.Size(35, 23);
