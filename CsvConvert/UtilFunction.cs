@@ -31,8 +31,8 @@ namespace CsvConvert
                 else
                 {
                     var row = dt.NewRow();
-                    row["Longitudinal_position"] = rowContext[0];
-                    row["Circumferential_position"] = rowContext[1];
+                    row["Longitudinal_position"] = Math.Ceiling(double.Parse(rowContext[0]));
+                    row["Circumferential_position"] = Math.Ceiling(double.Parse( rowContext[1]));
                     row["Depth"] = double.Parse(rowContext[2]).ToString("0.000000");
                     dt.Rows.Add(row);
                     endIndex++;
@@ -114,8 +114,8 @@ namespace CsvConvert
                     newRow.Circumferential_position /= denominator;
                     newRow.Depth /= denominator;
                     DataRow resultRow = resultTable.NewRow();
-                    resultRow["Longitudinal_position"] = newRow.Longitudinal_position;
-                    resultRow["Circumferential_position"] = newRow.Circumferential_position.ToString("0.000000");
+                    resultRow["Longitudinal_position"] = Math.Ceiling(newRow.Longitudinal_position);
+                    resultRow["Circumferential_position"] = Math.Ceiling(newRow.Circumferential_position).ToString("");
                     resultRow["Depth"] = newRow.Depth.ToString("0.000000");
                     resultTable.Rows.Add(resultRow);
                     modelList.Clear();

@@ -38,12 +38,12 @@ namespace CsvConvert
                         {
                             comboBox1.Items.Add(i.ToString());
                         }
-                        label1.Text = string.Format("共有 {0} 個特徵 要第幾個?", featureNumber);
+                        label1.Text = string.Format("欲分析得減薄缺陷編號(1~{0})", featureNumber);
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
+                    MessageBox.Show("Error: 無法讀取檔案.  error: " + ex.Message);
                 }
             }
 
@@ -102,7 +102,7 @@ namespace CsvConvert
         {
             int featureNum;
             comboBox1.Text = comboBox1.Text.Equals(string.Empty) ? "1" : comboBox1.Text;
-            if(int.TryParse(comboBox1.Text, out featureNum))
+            if(int.TryParse(comboBox1.Text, out featureNum) && (!outputPath.Text.Equals(string.Empty)))
             {
                 csvProcessing(featureNum);
                 UtilFunction.ToCSV(this.pivotTable, outputFile);
@@ -112,7 +112,12 @@ namespace CsvConvert
             }
             else
             {
-                MessageBox.Show("輸入指定 features 請輸入數字");
+                string mess = "";
+                if(!int.TryParse(comboBox1.Text, out _))
+                    mess += "輸入減薄缺陷編號必須為數字。\n";
+                if ((outputPath.Text.Equals(string.Empty)))
+                    mess += "請選擇輸出路徑。";
+                MessageBox.Show(mess);
             }
         }
 
