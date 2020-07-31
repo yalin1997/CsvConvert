@@ -36,7 +36,7 @@
             this.outputPathLabel = new System.Windows.Forms.Label();
             this.InputFileLabel = new System.Windows.Forms.Label();
             this.getOutputPathBtn = new System.Windows.Forms.Button();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // getPathBtn
@@ -130,22 +130,22 @@
             this.getOutputPathBtn.UseVisualStyleBackColor = true;
             this.getOutputPathBtn.Click += new System.EventHandler(this.getOutputPathBtn_Click);
             // 
-            // textBox2
+            // comboBox1
             // 
-            this.textBox2.Enabled = false;
-            this.textBox2.Location = new System.Drawing.Point(455, 273);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.ReadOnly = true;
-            this.textBox2.Size = new System.Drawing.Size(35, 23);
-            this.textBox2.TabIndex = 6;
-            this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
+            this.comboBox1.Enabled = false;
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(454, 275);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(49, 23);
+            this.comboBox1.TabIndex = 7;
+            this.comboBox1.TextChanged += new System.EventHandler(this.comboBox1_TextChanged);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(743, 480);
-            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.getOutputPathBtn);
             this.Controls.Add(this.InputFileLabel);
             this.Controls.Add(this.outputPathLabel);
@@ -172,7 +172,7 @@
         private System.Windows.Forms.Label outputPathLabel;
         private System.Windows.Forms.Label InputFileLabel;
         private System.Windows.Forms.Button getOutputPathBtn;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }
 

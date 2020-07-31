@@ -34,6 +34,10 @@ namespace CsvConvert
                         CsvReaderClass reader = new CsvReaderClass(csvPath);
                         csvContentDic = reader.readCsv();
                         featureNumber = UtilFunction.getFeaturesNumber(csvContentDic);
+                        for(int i =1; i<= featureNumber; i++)
+                        {
+                            comboBox1.Items.Add(i.ToString());
+                        }
                         label1.Text = string.Format("共有 {0} 個特徵 要第幾個?", featureNumber);
                     }
                 }
@@ -88,8 +92,7 @@ namespace CsvConvert
         {
             if (!textBox1.Text.Equals(String.Empty))
             {
-                textBox2.ReadOnly = false;
-                textBox2.Enabled = true;
+                comboBox1.Enabled = true;
                 button1.Enabled = true;
                 getOutputPathBtn.Enabled = true;
             }
@@ -98,7 +101,8 @@ namespace CsvConvert
         private void button1_Click(object sender, EventArgs e)
         {
             int featureNum;
-            if(int.TryParse(textBox2.Text, out featureNum))
+            comboBox1.Text = comboBox1.Text.Equals(string.Empty) ? "1" : comboBox1.Text;
+            if(int.TryParse(comboBox1.Text, out featureNum))
             {
                 csvProcessing(featureNum);
                 UtilFunction.ToCSV(this.pivotTable, outputFile);
@@ -116,7 +120,7 @@ namespace CsvConvert
         {
             int featureNum = 0;
 
-            if ((!textBox2.Text.Equals(String.Empty)) && (!textBox1.Text.Equals(String.Empty)) &&  int.TryParse(textBox2.Text, out featureNum))
+            if ((!comboBox1.Text.Equals(String.Empty)) && (!textBox1.Text.Equals(String.Empty)) &&  int.TryParse(comboBox1.Text, out featureNum))
             {
                 SaveFileDialog saveFile = new SaveFileDialog();
                 saveFile.Filter = "csv files (*.csv)|*.csv";
@@ -135,16 +139,24 @@ namespace CsvConvert
 
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
-            int textBox2Int;
-            if (int.TryParse(textBox2.Text, out textBox2Int))
+           
+        }
+
+        private void comboBox1_TextChanged(object sender, EventArgs e)
+        {
+            int comboBox1Int;
+            if (int.TryParse(comboBox1.Text, out comboBox1Int))
             {
-                textBox2Int = textBox2Int > featureNumber ? featureNumber : textBox2Int;
-                textBox2.Text = textBox2Int.ToString();
+                comboBox1Int = comboBox1Int > featureNumber ? featureNumber : comboBox1Int;
+                comboBox1.Text = comboBox1Int.ToString();
             }
             else
             {
-                MessageBox.Show("輸入指定 features 請輸入數字");
-                textBox2.Text = "1";
+                if (!comboBox1.Text.Equals(string.Empty))
+                {
+                    MessageBox.Show("輸入指定 features 請輸入數字");
+                    comboBox1.SelectedIndex = 0;
+                }
             }
         }
     }
