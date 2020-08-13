@@ -75,11 +75,11 @@ namespace CsvConvert
                         //double longitudinalPositionMax = dt.AsEnumerable().Select(value => value.Field<double>("Longitudinal_position")).Max();
                         dt.DefaultView.Sort = "Longitudinal_position";
                         DataTable sortedTable = dt.DefaultView.ToTable();
-                        if (sortedTable.Rows.Count > 100.0)
+                        /*if (sortedTable.Rows.Count > 100.0)
                         {
                             double Denominator = Math.Ceiling(sortedTable.Rows.Count / 100.0);
                             sortedTable = UtilFunction.reduceTableRows( sortedTable, Denominator);
-                        }
+                        }*/
                         UtilFunction.checkDistinct(sortedTable);
                         pivotTable = UtilFunction.ToPivot(sortedTable, sortedTable.Columns["Circumferential_position"], sortedTable.Columns["Depth"]);
                         sortedTable.Dispose();

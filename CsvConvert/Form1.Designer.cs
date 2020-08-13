@@ -71,7 +71,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(383, 36);
             this.label1.TabIndex = 2;
-            this.label1.Text = "欲分析得減薄缺陷編號(1~xx)";
+            this.label1.Text = "欲分析的減薄缺陷編號(1~xx)";
             // 
             // button1
             // 
@@ -146,10 +146,10 @@
             this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox1.ErrorImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.ErrorImage")));
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(623, 168);
+            this.pictureBox1.Location = new System.Drawing.Point(656, 147);
             this.pictureBox1.Margin = new System.Windows.Forms.Padding(5);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(734, 109);
+            this.pictureBox1.Size = new System.Drawing.Size(701, 120);
             this.pictureBox1.TabIndex = 8;
             this.pictureBox1.TabStop = false;
             // 
