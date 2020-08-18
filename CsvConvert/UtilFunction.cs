@@ -141,26 +141,18 @@ namespace CsvConvert
                 if (i != dt.Rows.Count - 1)
                 {
                     DataRow row1 = dt.Rows[i];
-                    int sameCounter = 1;
                     while (true)
                     {
                         DataRow nextRow = dt.Rows[i+1];
                         if (row1["Longitudinal_position"].Equals(nextRow["Longitudinal_position"]) && row1["Circumferential_position"].Equals(nextRow["Circumferential_position"]))
                         {
-                            double tempRow1 = Convert.ToDouble(row1["Depth"]);
-                            tempRow1 += Convert.ToDouble(nextRow["Depth"]);
-                            row1["Depth"] = tempRow1;
-                            dt.Rows.Remove(nextRow);
-                            sameCounter++;
+                            nextRow["Circumferential_position"] = Convert.ToDouble(nextRow["Circumferential_position"])+1;
                         }
                         else
                         {
                             break;
                         }
                     }
-                    double row1Depth = Convert.ToDouble(row1["Depth"]);
-                    row1Depth /= sameCounter;
-                    row1["Depth"] = row1Depth;
                 }
             }
         }
